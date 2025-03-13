@@ -1,0 +1,93 @@
+'use client';
+
+import { Button, Card, Form, Input, message } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
+import styles from './login.module.css';
+import { loginAction } from './action';
+
+interface LoginFormData {
+    email: string;
+    name: string;
+}
+
+console.log('process.env.PUBLIC_NEXT_BASE_URL', process.env.NEXT_PUBLIC_BASE_URL)
+
+export default function LoginPage() {
+    const router = useRouter();
+    const [form] = Form.useForm();
+
+    const onFinish = async (values: LoginFormData) => {
+        try {
+            const path = "auth/login"
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/${path}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values),
+                credentials: 'include'
+            });
+            console.log('finish')
+
+
+
+            console.log('response', response)
+
+
+
+
+            // if (result.error) {
+            //     throw new Error(result.error);
+            // }
+
+
+
+            if (response.ok) {
+                router.push('/');
+            }
+
+        } catch (error) {
+            message.error('Login failed. Please try again.');
+        }
+    };
+
+    return (<div className={styles.container}>
+        <Card title="Login" className={styles.loginCard}>
+            <Form
+                form={form}
+                name="login"
+                onFinish={onFinish}
+                layout="vertical"
+                size="large"
+            >
+                <Form.Item
+                    name="name"
+                    rules={[{ required: true, message: 'Please input your name!' }]}
+                >
+                    <Input
+                        prefix={<UserOutlined />}
+                        placeholder="Name"
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    name="email"
+                    rules={[{ required: true, message: 'Please input your email!' }]}
+                >
+                    <Input
+                        prefix={<MailOutlined />}
+                        placeholder="Email"
+                    />
+                </Form.Item>
+
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" block>
+                        Log in
+                    </Button>
+                </Form.Item>
+            </Form>
+        </Card>
+    </div>
+    );
+}
