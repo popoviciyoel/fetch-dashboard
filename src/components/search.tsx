@@ -1,10 +1,9 @@
-import { Input, Button, Slider } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import { Select, Space, } from 'antd';
+
+import { Select, Tag } from 'antd';
 import type { SelectProps } from 'antd';
 
 
-const CustomSelect = ({ breeds , setSelectedBreeds }) => {
+export const CustomSelect = ({ selectedBreeds, breeds, setSelectedBreeds }) => {
 
 
     const options: SelectProps['options'] = breeds || [];
@@ -18,45 +17,29 @@ const CustomSelect = ({ breeds , setSelectedBreeds }) => {
     };
 
 
-    return <Space style={{ width: '50%' }} direction="vertical">
+    return <div className='w-full'
+    >
         <Select
             mode="multiple"
-            allowClear
-            style={{ width: '100%' }}
-            placeholder="Please select"
+            // allowClear
+            className='w-full'
+            placeholder="Select Breeds"
             onChange={handleChange}
             options={options}
+            value={undefined} // Display the selected values
+        // Optionally, format the displayed values to show just the numbers
+        // tagRender={({ label }) => label} // Show only the numbers (if needed)
+        // labelRender={selectedBreeds.length}
         />
-    </Space>
-}
-
-
-export const Search = ({ breeds, handleSearch, handleMatch, onChange, setSelectedBreeds, setLocationSearch }) => {
-    return <div className="mb-4 flex  justify-between ">
-
-        <CustomSelect breeds={breeds} setSelectedBreeds={setSelectedBreeds} />
         <div>
-            <label>Age: </label>
-            <Slider className=' w-16' range defaultValue={[0, 20]} max={20} onChange={onChange} />
-        </div>
-        <div className=' w-48'>
-            <Input prefix={<SearchOutlined />} placeholder={"City, State, or zip code"} onChange={(e) => {
-                console.log(e.target.value)
-                setLocationSearch(e.target.value)
+            {selectedBreeds?.map((breed: string) => {
+                return <Tag color="blue">{breed}</Tag>
 
-            }} />
+            })}
 
         </div>
-
-
-        <Button className=' w-16' type="default" htmlType="button" onClick={handleSearch}>
-            Search
-        </Button>
-
-        <Button className=' w-16' type="primary" htmlType="button" onClick={handleMatch}>
-            Find Match
-        </Button>
-
 
     </div>
+
 }
+

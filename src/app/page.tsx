@@ -3,22 +3,18 @@
 import { useEffect, useState } from 'react';
 import { Table, Input, Card, Button, Slider } from 'antd';
 import type { TableProps } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, SearchOutlined, TableOutlined } from '@ant-design/icons';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import { Dog } from '../interfaces';
 import { Select, Space, Modal, message } from 'antd';
 import type { SelectProps } from 'antd';
 import { useRouter } from 'next/navigation';
-import { SignOutButton } from '@/components/SignOutButton';
 import { fetchZipCodesByLocation } from './fetch/location';
 import { fetchDogsByFilters } from './fetch/dogs';
 import { fetchMatch } from './fetch/match';
-import { Search } from '@/components/search';
 import { Header } from '@/components/header';
-
-
-
-
+import Accordian from '@/components/accordian';
+import { MapChart } from './MapChart';
 
 // Table columns configuration
 const columns: TableProps<Dog>['columns'] = [
@@ -58,6 +54,21 @@ const columns: TableProps<Dog>['columns'] = [
     dataIndex: 'zip_code',
     key: 'zip_code',
   },
+  {
+    title: 'State',
+    dataIndex: 'state',
+    key: 'state',
+  },
+  {
+    title: 'County',
+    dataIndex: 'county',
+    key: 'county',
+  },
+  {
+    title: 'City',
+    dataIndex: 'city',
+    key: 'city',
+  },
 ];
 
 
@@ -70,10 +81,13 @@ export default function DogsPage() {
   const [breeds, setBreeds] = useState()
   const [nextPage, setNextPage] = useState<string>('/dogs/search?sort=breed:asc')
   const [locationSearch, setLocationSearch] = useState<string>()
-  const [minAge, setMinAge] = useState(0)
-  const [maxAge, setMaxAge] = useState(20)
+  const [minAge, setMinAge] = useState()
+  const [maxAge, setMaxAge] = useState()
   const [total, setTotal] = useState()
   const [match, setMatch] = useState<Dog>()
+  const [mapView, setMapView] = useState(false)
+  const [result, setResult] = useState()
+  const router = useRouter()
 
   const [messageApi, contextHolder] = message.useMessage();
   const error = () => {
@@ -143,11 +157,21 @@ export default function DogsPage() {
       if (locationSearch) {
         zipcode = await fetchZipCodesByLocation(locationSearch)
       }
-      const result = await fetchDogsByFilters(selectedBreeds, minAge, maxAge, zipcode, true, '')
+      const result = await fetchDogsByFilters(selectedBreeds, minAge || 0, maxAge || 20, zipcode, true, '')
       console.log('data', result)
       setDogs(result.data)
       setNextPage(result.next)
-      setTotal(result.total)
+      if(selectedBreeds.length > 0 || locationSearch || minAge || maxAge){
+        setTotal(result.total)
+        setResult(<>
+           <p>{selectedBreeds.join(', ') + ' in ' + (locationSearch || "United States") + ' between ages ' + minAge + " - " + maxAge}</p>
+           <p>{total} Results</p>
+           </>)
+
+        
+
+
+      }
 
     } catch (error) {
       console.log('error', error)
@@ -200,6 +224,10 @@ export default function DogsPage() {
           'Accept': 'application/json',
         }
       });
+
+      if (!response3.ok) {
+        router.push('/login')
+      }
       const breeds = await response3.json()
 
       console.log('breeds', breeds)
@@ -229,21 +257,65 @@ export default function DogsPage() {
 
   return (
     <>
-          {contextHolder}
-          <Header/>
+      {contextHolder}
+      <Header />
 
- 
-      <div className="p-6">
-        <Card>
-          <Search breeds={breeds} handleMatch={handleMatch} handleSearch={handleSearch} onChange={onChange} setLocationSearch={setLocationSearch} setSelectedBreeds={setSelectedBreeds} />
 
-          {total && <div className='bg-sky-400'>
+      <div className="p-6 grid-cols-4 grid gap-5">
+        <div className='col-start-1'>
+          <Card>
+            <div className='flex justify-between'>
+              <h1 className=' mb-4 font-bold text-2xl'>
+                Filters
+
+
+              </h1>
+              <Button className=' w-16' type="default" htmlType="button" onClick={handleSearch}>
+                Search
+              </Button>
+
+
+            </div>
+
+            {/* <Search breeds={breeds} handleMatch={handleMatch} handleSearch={handleSearch} onChange={onChange} setLocationSearch={setLocationSearch} setSelectedBreeds={setSelectedBreeds} /> */}
+            <Accordian selectedBreeds={selectedBreeds} breeds={breeds} setSelectedBreeds={setSelectedBreeds} onChange={onChange} />
+
+            {result && <div className=' mb-4 bg-sky-400 rounded-lg p-2
+'>
+           {result}
+
+            </div>}
+
+          </Card>
+        </div>
+        <Card className='col-start-2 col-end-5'>
+          <div className='flex justify-between'>
+            <h1 className=' mb-4 font-bold text-2xl'>
+              Fetch Database Search
+            </h1>
+            <div className=' flex gap-2 items-center'>
+              <Button className=' w-32' type="primary" htmlType="button" onClick={handleMatch}>
+                Find Match
+              </Button>
+              {/* <EnvironmentOutlined style={{fontSize: 25}}/> */}
+              <Button className=' w-32' type="default" htmlType="button" icon={mapView ? <TableOutlined /> : <EnvironmentOutlined />} onClick={() => setMapView(!mapView)}>
+                {mapView ? 'Table View' : 'Map View'}
+              </Button>
+            </div>
+
+          </div>
+
+          {/* <Search breeds={breeds} handleMatch={handleMatch} handleSearch={handleSearch} onChange={onChange} setLocationSearch={setLocationSearch} setSelectedBreeds={setSelectedBreeds} />
+
+          {total && <div className=' mb-4 bg-sky-400 rounded-lg p-2
+'>
             <p>{selectedBreeds.join(', ') + ' in ' + (locationSearch || "United States") + ' between ages ' + minAge + " - " + maxAge}</p>
             <p>{total} Results</p>
 
-          </div>}
+          </div>} */}
 
-          <Table<Dog>
+          {mapView ? <MapChart dataSource={dogs}
+          /> : <Table<Dog>
             loading={loading}
             rowSelection={rowSelection}
             columns={columns}
@@ -252,9 +324,10 @@ export default function DogsPage() {
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
-              onChange: tableOnChange
+              onChange: tableOnChange,
+              // total: total
             }}
-          />
+          />}
         </Card>
       </div>
 
@@ -299,6 +372,7 @@ export default function DogsPage() {
 
   );
 }
+
 
 
 // General Requirements
