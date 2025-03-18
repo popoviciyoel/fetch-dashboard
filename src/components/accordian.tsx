@@ -1,11 +1,19 @@
 import React from 'react';
-import type { CollapseProps, SliderSingleProps } from 'antd';
+import type { CollapseProps, SelectProps, SliderSingleProps } from 'antd';
 import { Collapse, Input, Slider } from 'antd';
 import { CustomSelect } from './search';
 import { SearchOutlined } from '@ant-design/icons';
 
+interface AccordianProps {
+    selectedBreeds: string[];
+    breeds: SelectProps['options'];
+    setSelectedBreeds: (breeds: string[]) => void;
+    onChange: (value: [number, number]) => void;
+    setLocationSearch: (location: string) => void;
+  }
+  
 
-const Accordian: React.FC = ({ selectedBreeds, breeds, setSelectedBreeds, onChange, setLocationSearch }) => {
+const Accordian: React.FC<AccordianProps> = ({ selectedBreeds, breeds, setSelectedBreeds, onChange, setLocationSearch }) => {
     const onChangeActiveAccordian = (key: string | string[]) => {
         console.log(key);
     };

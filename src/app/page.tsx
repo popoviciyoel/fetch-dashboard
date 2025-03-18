@@ -5,7 +5,7 @@ import { Table, Input, Card, Button, Slider } from 'antd';
 import type { TableProps } from 'antd';
 import { EnvironmentOutlined, SearchOutlined, TableOutlined } from '@ant-design/icons';
 import type { TableRowSelection } from 'antd/es/table/interface';
-import { Dog } from '../interfaces';
+import { Dog, Location } from '../interfaces';
 import { Select, Space, Modal, message } from 'antd';
 import type { SelectProps } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -13,7 +13,7 @@ import { fetchZipCodesByLocation } from './fetch/location';
 import { fetchDogsByFilters } from './fetch/dogs';
 import { fetchMatch } from './fetch/match';
 import { Header } from '@/components/header';
-import Accordian from '@/components/accordian';
+import { Filters } from './filters';
 import { MapChart } from './MapChart';
 
 // Table columns configuration
@@ -152,23 +152,23 @@ export default function DogsPage() {
   const handleSearch = async () => {
     try {
 
-      let zipcode: string[] = []
+      let locations: Location[] = []
 
       if (locationSearch) {
-        zipcode = await fetchZipCodesByLocation(locationSearch)
+        locations = await fetchZipCodesByLocation(locationSearch)
       }
-      const result = await fetchDogsByFilters(selectedBreeds, minAge || 0, maxAge || 20, zipcode, true, '')
+      const result = await fetchDogsByFilters(selectedBreeds, minAge || 0, maxAge || 20, locations, true, nextPage)
       console.log('data', result)
       setDogs(result.data)
       setNextPage(result.next)
-      if(selectedBreeds.length > 0 || locationSearch || minAge || maxAge){
+      if (selectedBreeds.length > 0 || locationSearch || minAge || maxAge) {
         setTotal(result.total)
         setResult(<>
-           <p>{selectedBreeds.join(', ') + ' in ' + (locationSearch || "United States") + ' between ages ' + minAge + " - " + maxAge}</p>
-           <p>{total} Results</p>
-           </>)
+          <p>{selectedBreeds.join(', ') + ' in ' + (locationSearch || "United States") + ' between ages ' + minAge + " - " + maxAge}</p>
+          <p>{result.total} Results</p>
+        </>)
 
-        
+
 
 
       }
@@ -199,6 +199,8 @@ export default function DogsPage() {
 
 
     console.log(page, pageSize)
+    console.log('page >= Math.ceil((dogs.length / pageSize)) - 1 ', page >= Math.ceil((dogs.length / pageSize)) - 1 )
+    console.log('nextPage', nextPage)
     if (page >= Math.ceil((dogs.length / pageSize)) - 1 && nextPage) {
 
       console.log('fetchAPI')
@@ -263,30 +265,15 @@ export default function DogsPage() {
 
       <div className="p-6 grid-cols-4 grid gap-5">
         <div className='col-start-1'>
-          <Card>
-            <div className='flex justify-between'>
-              <h1 className=' mb-4 font-bold text-2xl'>
-                Filters
-
-
-              </h1>
-              <Button className=' w-16' type="default" htmlType="button" onClick={handleSearch}>
-                Search
-              </Button>
-
-
-            </div>
-
-            {/* <Search breeds={breeds} handleMatch={handleMatch} handleSearch={handleSearch} onChange={onChange} setLocationSearch={setLocationSearch} setSelectedBreeds={setSelectedBreeds} /> */}
-            <Accordian selectedBreeds={selectedBreeds} breeds={breeds} setSelectedBreeds={setSelectedBreeds} onChange={onChange} />
-
-            {result && <div className=' mb-4 bg-sky-400 rounded-lg p-2
-'>
-           {result}
-
-            </div>}
-
-          </Card>
+          <Filters
+            selectedBreeds={selectedBreeds}
+            breeds={breeds}
+            setSelectedBreeds={setSelectedBreeds}
+            onChange={onChange}
+            handleSearch={handleSearch}
+            result={result}
+            setLocationSearch={setLocationSearch}
+          />
         </div>
         <Card className='col-start-2 col-end-5'>
           <div className='flex justify-between'>
@@ -297,22 +284,12 @@ export default function DogsPage() {
               <Button className=' w-32' type="primary" htmlType="button" onClick={handleMatch}>
                 Find Match
               </Button>
-              {/* <EnvironmentOutlined style={{fontSize: 25}}/> */}
               <Button className=' w-32' type="default" htmlType="button" icon={mapView ? <TableOutlined /> : <EnvironmentOutlined />} onClick={() => setMapView(!mapView)}>
                 {mapView ? 'Table View' : 'Map View'}
               </Button>
             </div>
 
           </div>
-
-          {/* <Search breeds={breeds} handleMatch={handleMatch} handleSearch={handleSearch} onChange={onChange} setLocationSearch={setLocationSearch} setSelectedBreeds={setSelectedBreeds} />
-
-          {total && <div className=' mb-4 bg-sky-400 rounded-lg p-2
-'>
-            <p>{selectedBreeds.join(', ') + ' in ' + (locationSearch || "United States") + ' between ages ' + minAge + " - " + maxAge}</p>
-            <p>{total} Results</p>
-
-          </div>} */}
 
           {mapView ? <MapChart dataSource={dogs}
           /> : <Table<Dog>
