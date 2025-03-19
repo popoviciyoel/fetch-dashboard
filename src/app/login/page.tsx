@@ -1,10 +1,9 @@
 'use client';
 
 import { Button, Card, Form, Input, message } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { UserOutlined, MailOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import styles from './login.module.css';
-import { loginAction } from './action';
 
 interface LoginFormData {
     email: string;
@@ -44,7 +43,7 @@ export default function LoginPage() {
 
 
             if (response.ok) {
-                router.push('/');
+                router.push('/home');
             }
 
         } catch (error) {

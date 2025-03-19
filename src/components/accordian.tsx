@@ -3,20 +3,15 @@ import type { CollapseProps, SelectProps, SliderSingleProps } from 'antd';
 import { Collapse, Input, Slider } from 'antd';
 import { CustomSelect } from './search';
 import { SearchOutlined } from '@ant-design/icons';
+import { useUserProvider } from '@/app/userProvider';
 
-interface AccordianProps {
-    selectedBreeds: string[];
-    breeds: SelectProps['options'];
-    setSelectedBreeds: (breeds: string[]) => void;
-    onChange: (value: [number, number]) => void;
-    setLocationSearch: (location: string) => void;
-  }
-  
 
-const Accordian: React.FC<AccordianProps> = ({ selectedBreeds, breeds, setSelectedBreeds, onChange, setLocationSearch }) => {
+const Accordian: React.FC = () => {
     const onChangeActiveAccordian = (key: string | string[]) => {
         console.log(key);
     };
+
+    const { user, handleAgeFilter, handleBreedFilter, handleLocationSearchFilter } = useUserProvider()
 
     const marks: SliderSingleProps['marks'] = {
         0: '0 yrs',
@@ -28,22 +23,18 @@ const Accordian: React.FC<AccordianProps> = ({ selectedBreeds, breeds, setSelect
         {
             key: '1',
             label: 'Breed',
-            children: <CustomSelect selectedBreeds={selectedBreeds} breeds={breeds} setSelectedBreeds={setSelectedBreeds} />,
+            children: <CustomSelect availableBreeds={user?.availableBreeds} selectedBreeds={user?.filters?.selectedBreeds} handleBreedFilter={handleBreedFilter} />,
         },
         {
             key: '2',
             label: 'Age',
-            children: <Slider marks={marks} range defaultValue={[0, 20]} max={20} onChange={onChange} />
+            children: <Slider marks={marks} range defaultValue={[0, 20]} max={20} onChange={handleAgeFilter} />
             ,
         },
         {
             key: '3',
             label: 'Location',
-            children: <Input prefix={<SearchOutlined />} placeholder={"City, State, or zip code"} onChange={(e) => {
-                console.log(e.target.value)
-                setLocationSearch(e.target.value)
-
-            }} />
+            children: <Input prefix={<SearchOutlined />} value={user?.filters.locationSearch} placeholder={"City, State, or zip code"} onChange={handleLocationSearchFilter} />
         },
     ];
 

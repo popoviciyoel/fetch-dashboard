@@ -1,4 +1,3 @@
-import { encodeArrayParam } from "@/utils";
 import { Dog, Location } from "@/interfaces";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -10,10 +9,10 @@ export const fetchDogsByFilters = async (
     locations: Location[],
     isNewSearch: boolean,
     nextPageUrl: string
-): Promise<{ data: Dog[]; next: string | null; total: number }> => {
+): Promise<{ results: Dog[]; next: string | null; total: number, prev: string | null }> => {
     try {
         // Early return if no filters provided
-        if (!isNewSearch && !nextPageUrl) return { data: [], next: null, total: 0 };
+        if (!isNewSearch && !nextPageUrl) return { results: [], next: null, total: 0, prev: null };
 
         // Build search query
         let apiUrl: string = BASE_URL!
@@ -44,8 +43,8 @@ export const fetchDogsByFilters = async (
 
         if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
 
-        const { resultIds, next, total } = await response.json();
-        if (!resultIds || resultIds.length === 0) return { data: [], next, total };
+        const { resultIds, next, total, prev } = await response.json();
+        if (!resultIds || resultIds.length === 0) return { results: [], next, total, prev: null };
 
         // Fetch dog details
         const detailsResponse = await fetch(`${BASE_URL}/dogs`, {
@@ -129,13 +128,13 @@ export const fetchDogsByFilters = async (
                 ...map.get(dog.zip_code)
             }
         })
-        return { data: dogsWithLocation, next, total };
+        return { results: dogsWithLocation, next, total, prev };
 
 
 
 
     } catch (error) {
         console.error("Failed to fetch dogs:", error);
-        return { data: [], next: null, total: 0 };
+        return { results: [], next: null, total: 0, prev: null };
     }
 };

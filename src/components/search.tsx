@@ -2,27 +2,20 @@
 import { Select, Tag } from 'antd';
 import type { SelectProps } from 'antd';
 import { CloseOutlined } from '@ant-design/icons'
+import { useUserProvider } from '@/app/userProvider';
 
 
 interface CustomSelectProps {
+    availableBreeds: SelectProps['options']
     selectedBreeds: string[]
-    breeds: SelectProps['options']
-    setSelectedBreeds: (selectedBreeds: string[]) => void
+    handleBreedFilter: (selectedBreeds: string[]) => void
 
 }
 
-export const CustomSelect = ({ selectedBreeds, breeds, setSelectedBreeds }: CustomSelectProps) => {
-
-
-    const options: SelectProps['options'] = breeds || [];
+export const CustomSelect = ({ availableBreeds, selectedBreeds, handleBreedFilter }: CustomSelectProps) => {
 
 
 
-    const handleChange = (value: string[]) => {
-        console.log(`selected ${value}`);
-
-        setSelectedBreeds(value)
-    };
 
 
     return <div className='w-full'
@@ -30,22 +23,18 @@ export const CustomSelect = ({ selectedBreeds, breeds, setSelectedBreeds }: Cust
         <Select
             mode="multiple"
             // allowClear
-            prefix={selectedBreeds?.length > 0  ? <span>{selectedBreeds?.length}</span> : null}
+            prefix={selectedBreeds?.length > 0 && <span>{selectedBreeds?.length}</span>}
             className='w-full'
             placeholder="Select Breeds"
-            onChange={handleChange}
-            options={options}
+            onChange={handleBreedFilter}
+            options={availableBreeds}
             maxTagCount={0} // Hides tags in the input field
-
             value={selectedBreeds} // Display the selected values
-            // Optionally, format the displayed values to show just the numbers
-            // tagRender={({ label }) => label} // Show only the numbers (if needed)
-            // labelRender={selectedBreeds.length}
             tagRender={() => null} // Hides individual tags
         />
         <div className='mt-4 gap-1 flex flex-wrap'>
             {selectedBreeds?.map((displayBreed: string) => {
-                return <Tag color="blue" key={displayBreed}>{displayBreed} <CloseOutlined onClick={() => handleChange(selectedBreeds.filter(breed => breed !== displayBreed))} /></Tag>
+                return <Tag color="blue" key={displayBreed}>{displayBreed} <CloseOutlined onClick={() => handleBreedFilter(selectedBreeds.filter(breed => breed !== displayBreed))} /></Tag>
 
             })}
 

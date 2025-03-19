@@ -1,8 +1,8 @@
 import { parseLocation } from "@/utils";
-
+import { Location } from "@/interfaces";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const fetchZipCodesByLocation = async (searchQuery: string): Promise<string[]> => {
+export const fetchZipCodesByLocation = async (searchQuery: string): Promise<Location[]> => {
   try {
     const { city, state } = parseLocation(searchQuery);
     if (!city && !state) return []; // Return early if city is not available

@@ -1,6 +1,7 @@
 import { Marker } from "react-simple-maps";
 
 interface Dog {
+  id: string
   name: string;
   coordinates: [number, number];
   img: string;
@@ -14,19 +15,23 @@ interface Dog {
 interface DogMarkerProps {
   dog: Dog;
   index: number;
+  selectedDogs: string[]
   hoveredMarker: number | null;
   onMouseEnter: (index: number) => void;
   onMouseLeave: () => void;
+  onClick: any
 }
 
 export function DogMarker({
   dog,
   index,
+  selectedDogs,
   hoveredMarker,
+  onClick,
   onMouseEnter,
   onMouseLeave
 }: DogMarkerProps) {
-  const { name, longitude, latitude, img, breed, age, zip_code, city, state } = dog;
+  const { name, longitude, latitude, img, breed, age, zip_code, city, state , id} = dog;
 
   return (
     <Marker
@@ -35,8 +40,10 @@ export function DogMarker({
       coordinates={[longitude, latitude]}
       onMouseEnter={() => onMouseEnter(index)}
       onMouseLeave={onMouseLeave}
+      onClick={() => onClick(id)}
+      className="cursor-pointer"
     >
-      <circle r={10} fill="#E42A1D" stroke="#fff" strokeWidth={2} />
+      <circle r={10} fill={selectedDogs.includes(id) ? "#00000" : "#E42A1D"} stroke="#fff" strokeWidth={2} />
       <text
         textAnchor="middle"
         y={-20}
