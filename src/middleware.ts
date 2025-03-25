@@ -24,14 +24,25 @@ export function middleware(request: NextRequest) {
 
   // console.log('authToken', authToken)
 
+  const path = request.nextUrl.pathname
+  console.log('path', path)
+
+  if (path !== '/login' && path !== 'home') {
+    console.log('in hjer')
+
+    const loginUrl = new URL('/login', request.url)
+    return NextResponse.redirect(loginUrl)
+
+  }
+
   // // If there's no auth token and the user is trying to access a protected route
   // if (!authToken) {
   //   // Redirect to login page
   //   const loginUrl = new URL('/login', request.url)
-    
+
   //   // Add the original destination as a redirect parameter
   //   loginUrl.searchParams.set('redirect', request.nextUrl.pathname)
-    
+
   //   return NextResponse.redirect(loginUrl)
   // }
 

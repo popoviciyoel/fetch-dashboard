@@ -5,7 +5,7 @@ import {
     Geography,
 } from "react-simple-maps";
 
-import { DogMarker } from './DogMarker';
+import { DogMarker } from './dogMarker';
 import geoAlbersUsaTerritories from "geo-albers-usa-territories";
 import { useState } from "react";
 import { Dog } from "@/interfaces";
@@ -20,12 +20,13 @@ interface MapProps {
 }
 
 export const MapChart = ({ results, selectedDogs, setSelectedDogs }: MapProps) => {
+    const [hoveredMarker, setHoveredMarker] = useState<null | number>(null); // To store the index of hovered marker
+
+
     if (!results) {
         return null
     }
-    console.log('geoAlbersUsaTerritories', geoAlbersUsaTerritories)
 
-    const [hoveredMarker, setHoveredMarker] = useState<null | number>(null); // To store the index of hovered marker
 
     const handleMouseEnter = (index: number) => {
         setHoveredMarker(index); // Set the index of hovered marker

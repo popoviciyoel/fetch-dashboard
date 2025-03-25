@@ -2,7 +2,6 @@
 import { Select, Tag } from 'antd';
 import type { SelectProps } from 'antd';
 import { CloseOutlined } from '@ant-design/icons'
-import { useUserProvider } from '@/app/userProvider';
 
 
 interface CustomSelectProps {

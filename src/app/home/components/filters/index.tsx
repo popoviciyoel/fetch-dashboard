@@ -1,12 +1,12 @@
 import { Card, Button } from 'antd';
-import Accordian from '@/components/accordian';
-import { useUserProvider } from '../../userProvider';
+import Accordian from '@/app/home/components/filters/accordian';
+import { useUserProvider } from '@/app/userProvider';
 
 
 
 export function Filters() {
 
-    const { handleSearch, clearFilters, searchResult } = useUserProvider()
+    const { handleSearch, clearFilters, searchResults } = useUserProvider()
     return (
         <Card>
             <div className='flex justify-between'>
@@ -28,10 +28,10 @@ export function Filters() {
             <Accordian
             />
 
-            {searchResult && (
+            {searchResults && (
                 <div className='my-4 bg-sky-400 rounded-lg p-2'>
                     <pre className='text-wrap'>
-                        {searchResult}
+                        {searchResults}
 
                     </pre>
                 </div>

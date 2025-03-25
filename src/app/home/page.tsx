@@ -120,7 +120,7 @@ export default function DogsPage() {
 
 
           {mapView ? <MapChart results={results} selectedDogs={selectedDogs} setSelectedDogs={setSelectedDogs} 
-          /> : <DogTable selectedDogs={selectedDogs} setSelectedDogs={setSelectedDogs} results={results} />}
+          /> : <DogTable selectedDogs={selectedDogs} setSelectedDogs={setSelectedDogs} />}
         </Card>
       </div>
 

@@ -3,6 +3,8 @@ import { Dog } from "@/interfaces"
 import { Table, type TableProps } from 'antd';
 import { useUserProvider } from "@/app/userProvider";
 import type { TableRowSelection } from 'antd/es/table/interface';
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 // Table columns configuration
 export const columns: TableProps<Dog>['columns'] = [
@@ -11,10 +13,15 @@ export const columns: TableProps<Dog>['columns'] = [
     dataIndex: 'img',
     key: 'img',
     render: (img: string) => (
-      <img
+      <Image
+        width={50}
+        height={50}
+        objectFit="cover"
+
+
         src={img}
         alt="Dog"
-        style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
+        style={{ borderRadius: '4px' }}
       />
     ),
   },
@@ -22,20 +29,16 @@ export const columns: TableProps<Dog>['columns'] = [
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    sorter: (a, b) => a.name.localeCompare(b.name),
   },
   {
     title: 'Breed',
     dataIndex: 'breed',
     key: 'breed',
-    filterable: true,
-    sorter: (a, b) => a.breed.localeCompare(b.breed),
   },
   {
     title: 'Age',
     dataIndex: 'age',
     key: 'age',
-    sorter: (a, b) => a.age - b.age,
   },
   {
     title: 'Zip Code',
@@ -66,9 +69,14 @@ interface DogTableProps {
 }
 
 
-export const DogTable = ({ selectedDogs, setSelectedDogs, results }: DogTableProps) => {
+export const DogTable = ({ selectedDogs, setSelectedDogs }: DogTableProps) => {
 
-  const { loading, onChangeTable, searchResult } = useUserProvider()
+  const { loading, onChangeTable, query, data } = useUserProvider()
+  const param = useSearchParams()
+
+  console.log('data', data)
+
+
 
   // Row selection configuration
   const rowSelection: TableRowSelection<Dog> = {
@@ -80,16 +88,18 @@ export const DogTable = ({ selectedDogs, setSelectedDogs, results }: DogTablePro
 
 
   return <Table<Dog>
+
     loading={loading}
     rowSelection={rowSelection}
     columns={columns}
-    dataSource={results}
+    dataSource={data}
     rowKey="id"
     pagination={{
       pageSize: 10,
       showSizeChanger: true,
       onChange: onChangeTable,
-      total: Number(searchResult)
+      total: query?.total,
+      current: Number(param.get('page'))
     }}
   />
 }

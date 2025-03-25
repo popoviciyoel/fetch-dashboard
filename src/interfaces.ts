@@ -25,3 +25,16 @@ export interface Coordinates {
 export interface Match {
     match: string
 }
+
+
+export enum SortField {
+    BREED = 'breed',
+    NAME = 'name',
+    AGE = 'age'
+
+}
+
+export enum SortOrder {
+    ASC = 'asc',
+    DESC = 'desc'
+}

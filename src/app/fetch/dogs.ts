@@ -1,16 +1,17 @@
 import { Dog, Location } from "@/interfaces";
+import { Filters } from "../userProvider";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchDogsByFilters = async (
-    breeds: string[],
-    minAge: number,
-    maxAge: number,
+    filter: Filters,
     locations: Location[],
     isNewSearch: boolean,
-    nextPageUrl: string
+    nextPageUrl: string,
+    cursor: number,
 ): Promise<{ results: Dog[]; next: string | null; total: number, prev: string | null }> => {
     try {
+        const {breeds, locationSearch, minAge, maxAge, field, order} = filter
         // Early return if no filters provided
         if (!isNewSearch && !nextPageUrl) return { results: [], next: null, total: 0, prev: null };
 
@@ -25,14 +26,18 @@ export const fetchDogsByFilters = async (
             }
             if (minAge !== undefined) queryParams.append("ageMin", minAge.toString());
             if (maxAge !== undefined) queryParams.append("ageMax", maxAge.toString());
+            queryParams.append("size", '30');
+
+            queryParams.append('sort', `${field}:${order}`)
 
 
             apiUrl += `/dogs/search?${queryParams.toString()}`;
         } else {
-            apiUrl += nextPageUrl
+            const params = new URLSearchParams(nextPageUrl)
+            params.set('from', cursor.toString())
+            apiUrl += decodeURIComponent(params.toString())
 
         }
-        // const apiUrl = isNewSearch ? searchUrl : nextPageUrl;
 
         // Fetch dog IDs
         const response = await fetch(apiUrl, {

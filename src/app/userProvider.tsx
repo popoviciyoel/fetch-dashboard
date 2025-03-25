@@ -1,26 +1,32 @@
 'use client';
 
 import { SelectProps } from "antd"
-import { useRouter } from "next/navigation"
-import { createContext, useContext, useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { createContext, useContext, useEffect, useRef, useState } from "react"
 import { fetchZipCodesByLocation } from "./fetch/location";
 import { fetchDogsByFilters } from "./fetch/dogs";
-import { Location, Dog } from "@/interfaces";
+import { Location, Dog, SortField, SortOrder } from "@/interfaces";
+import { storePages } from "@/utils";
 
-interface Filters {
+
+export interface Filters {
     locationSearch: string
-    selectedBreeds: string[]
-    minAge?: number;
-    maxAge?: number
+    breeds: string[]
+    minAge: number;
+    maxAge: number
+    field: SortField
+    order: SortOrder
 }
 
 interface Query {
     next?: string | null
-    results?: Dog[]
+    results: Dog[] // We Map pages to Dogs
     total?: number
     prev?: string | null
 
 }
+
+
 
 interface User {
     authenticated?: boolean
@@ -31,31 +37,50 @@ interface User {
 
 
 interface UserContext {
-    searchResult: string
     loading: boolean
     user: User
     query: Query
+    searchResults: string
 
     handleSearch?: () => void
     setUser: (user: User) => void
     clearFilters: () => void
     handleAgeFilter: (e) => void
-    handleBreedFilter: (selectedBreeds: string[]) => void
+    handleBreedFilter: (breeds: string[]) => void
     handleLocationSearchFilter: (e) => void
     onChangeTable: (page: number, pageSize: number) => void
+    handleSortOrder: (order: SortOrder) => void
+    handleSortField: (field: SortField) => void
 
+
+    data: Dog[]
 
 }
+
 
 
 const UserContext = createContext<UserContext>()
 
 
+
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState<User>({ authenticated: false, availableBreeds: [], filters: { locationSearch: '', selectedBreeds: [] } })
-    const [searchResult, setSearchResults] = useState<string>()
+    const [user, setUser] = useState<User>({ authenticated: false, availableBreeds: [], filters: { minAge: 0, maxAge: 20, locationSearch: '', breeds: [], field: SortField.BREED, order: SortOrder.ASC } })
     const [loading, setLoading] = useState(false)
-    const [query, setQuery] = useState<Query>({results: [], next: null, prev: null, total: 0})
+
+
+    const [query, setQuery] = useState<Query>({ results: [], next: null, prev: null, total: 0 })
+    const [activeData, setActiveData] = useState<Dog[]>([])
+    const [searchResults, setSearchResults] = useState()
+
+
+    const searchParams = new URLSearchParams(useSearchParams().toString());
+
+    const updateUrlParam = (key, value) => {
+        searchParams.set(key, value);
+        router.push(`?${searchParams.toString()}`, { scroll: false });
+    };
+
+    const pageTracker = useRef<Map<number, Dog[]>>(new Map())
 
     const router = useRouter()
     console.log('user', user)
@@ -93,25 +118,37 @@ export const UserProvider = ({ children }) => {
         setUser({
             ...user, filters: {
                 locationSearch: '',
-                selectedBreeds: [],
+                breeds: [],
                 minAge: 0,
-                maxAge: 20
+                maxAge: 20,
+                field: SortField.BREED, order: SortOrder.ASC
             }
         })
     }
 
     const onChangeTable = async (page: number, pageSize: number) => {
 
-        if (page >= Math.ceil(((query?.results?.length || 0) / pageSize)) - 1 && query?.next) {
+        let activePage = pageTracker.current.get(page)
 
-            const { selectedBreeds, minAge, maxAge } = user?.filters || {}
+        updateUrlParam('page', page.toString())
 
-            const moreResults = await fetchDogsByFilters(selectedBreeds, minAge || 0, maxAge || 20, [], false, query?.next)
-            setQuery({ ...moreResults, results: [...(query.results || []), ...moreResults.results] })
+        console.log('activePage', activePage)
+        if (!activePage) {
+            setLoading(true)
+
+            const results: Query = await fetchDogsByFilters(user?.filters, [], false, query?.next, (page * pageSize) - pageSize)
+            console.log('results', results)
+            storePages(results.results, pageTracker, page)
+
+            activePage = pageTracker.current.get(page)
+
+            setLoading(false)
+
 
 
         }
 
+        setActiveData(activePage!)
     }
 
     const handleAgeFilter = (e: any) => {
@@ -126,8 +163,19 @@ export const UserProvider = ({ children }) => {
 
     };
 
-    const handleBreedFilter = (selectedBreeds: string[]) => {
-        setUser({ ...user, filters: { ...user.filters, selectedBreeds: selectedBreeds } })
+    const handleBreedFilter = (breeds: string[]) => {
+        setUser({ ...user, filters: { ...user.filters, breeds: breeds } })
+
+    }
+
+
+    const handleSortOrder = (order: SortOrder) => {
+        setUser({ ...user, filters: { ...user.filters, order } })
+
+    }
+
+    const handleSortField = (field: SortField) => {
+        setUser({ ...user, filters: { ...user.filters, field } })
 
     }
 
@@ -138,23 +186,34 @@ export const UserProvider = ({ children }) => {
 
     const handleSearch = async () => {
         setLoading(true)
+        pageTracker.current.clear()
+
+
         try {
 
-            const { locationSearch, selectedBreeds, minAge, maxAge } = user?.filters || {}
 
+            const { breeds, minAge, maxAge, locationSearch } = user?.filters
             let locations: Location[] = []
 
             if (locationSearch) {
                 locations = await fetchZipCodesByLocation(locationSearch)
             }
-            const results: Query = await fetchDogsByFilters(selectedBreeds, minAge || 0, maxAge || 20, locations, true, query?.next)
+            const results: Query = await fetchDogsByFilters(user?.filters, locations, true, query?.next, 0)
 
-            if (selectedBreeds.length > 0 || locationSearch || minAge || maxAge) {
+            storePages(results.results, pageTracker, 1)
 
-                setSearchResults(`${selectedBreeds.join(', ')}` + ' in ' + (locationSearch || "United States") + ' between ages ' + `${minAge || 0}` + " - " + `${maxAge || 20}` + `\nResults: ${result.total}`)
+
+
+
+
+            if (breeds.length > 0 || locationSearch || minAge || maxAge) {
+
+                setSearchResults(`${breeds.join(', ')}` + ' in ' + (locationSearch || "United States") + ' between ages ' + `${minAge || 0}` + " - " + `${maxAge || 20}` + `\nResults: ${results.total}`)
 
 
             }
+            const activeData = pageTracker.current.get(1)
+            setActiveData(activeData!)
             setQuery(results)
 
 
@@ -181,8 +240,10 @@ export const UserProvider = ({ children }) => {
         return <p>Loading your dogs</p>
     }
 
+    console.log(' pageTracker.current', pageTracker.current)
 
-    return <UserContext.Provider value={{ user, query, loading, handleSearch, setUser, clearFilters, handleAgeFilter, handleBreedFilter, handleLocationSearchFilter, searchResult, onChangeTable }}>
+
+    return <UserContext.Provider value={{ data: activeData, user, query, loading, searchResults, handleSearch, setUser, clearFilters, handleAgeFilter, handleBreedFilter, handleLocationSearchFilter, handleSortOrder, handleSortField, onChangeTable }}>
         {children}
     </UserContext.Provider>
 }
