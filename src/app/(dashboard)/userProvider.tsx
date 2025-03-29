@@ -142,7 +142,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         if (!activePage) {
             setLoading(true)
 
-            const results: Query = await fetchDogsByFilters(user?.filters, [], false, '', (page * pageSize) - pageSize)
+            const results: Query = await fetchDogsByFilters(user?.filters, [], false, query?.next, (page * pageSize) - pageSize)
             console.log('results', results)
             storePages(results.results, pageTracker, page)
 
@@ -205,7 +205,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             if (locationSearch) {
                 locations = await fetchZipCodesByLocation(locationSearch)
             }
-            const results: Query = await fetchDogsByFilters(user?.filters, locations, true, query?.next, 0)
+            console.log('query?.next', query?.next)
+            const results: Query = await fetchDogsByFilters(user?.filters, locations, true, '', 0)
 
             storePages(results.results, pageTracker, 1)
 
@@ -213,12 +214,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-            if (breeds.length > 0 || locationSearch || minAge || maxAge) {
 
-                setSearchResults(`${breeds.join(', ')}` + ' in ' + (locationSearch || "United States") + ' between ages ' + `${minAge || 0}` + " - " + `${maxAge || 20}` + `\nResults: ${results.total}`)
+                setSearchResults(`${breeds.length > 0 ?  breeds.join(', ') + 'in' : ''}` + ' ' + (locationSearch || "United States") + ' between ages ' + `${minAge || 0}` + " - " + `${maxAge || 20}` + `\nResults: ${results.total}`)
 
 
-            }
+     
             const activeData = pageTracker.current.get(1)
             updateUrlParam('page', '1')
 

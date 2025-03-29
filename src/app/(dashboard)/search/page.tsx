@@ -68,13 +68,10 @@ export default function DogsPage() {
       {contextHolder}
 
       <div className="p-6 grid grid-cols-4 gap-5">
-        {/* Sidebar Filters */}
-        <div className="col-start-1">
-          <Filters />
-        </div>
+
 
         {/* Main content card containing header and view components */}
-        <Card className="col-start-2 col-end-5">
+        <Card className="col-start-1 col-end-4">
           <div className="flex justify-between">
             {/* Header */}
             <h1 className="mb-4 font-bold text-2xl">Fetch Database Search</h1>
@@ -104,7 +101,6 @@ export default function DogsPage() {
           {/* Conditionally render either the MapChart or DogTable based on mapView state */}
           {mapView ? (
             <Map
-              results={results}
               selectedDogs={selectedDogs}
               setSelectedDogs={setSelectedDogs}
             />
@@ -115,6 +111,10 @@ export default function DogsPage() {
             />
           )}
         </Card>
+        {/* Sidebar Filters */}
+        <div className="col-start-4">
+          <Filters />
+        </div>
       </div>
 
       {/* Modal component for displaying match details */}

@@ -8,16 +8,16 @@ export function Filters() {
 
     const { handleSearch, clearFilters, searchResults } = useUserProvider()
     return (
-        <Card>
-            <div className='flex justify-between'>
-                <h1 className='mb-4 font-bold text-2xl'>
+        <Card className=' sticky!   top-20!'>
+            <div className='flex justify-between lg:text-2xl md:text-lg text-m'>
+                <h1 className='mb-4 font-bold '>
                     Filters
                 </h1>
                 <div className=' flex gap-2'>
-                    <Button className='w-16' type="primary" htmlType="button" onClick={handleSearch}>
+                    <Button className='lg:w-16 md:w-10 w-6' type="primary" htmlType="button" onClick={handleSearch}>
                         Search
                     </Button>
-                    <Button className='w-24' type="default" htmlType="button" onClick={clearFilters
+                    <Button className='lg:w-24 md:w-12 w-8' type="default" htmlType="button" onClick={clearFilters
                     }>
                         Clear Filters
                     </Button>
@@ -29,8 +29,8 @@ export function Filters() {
             />
 
             {searchResults && (
-                <div className='my-4 bg-sky-400 rounded-lg p-2'>
-                    <pre className='text-wrap'>
+                <div className='my-4 rounded-lg p-2' style={{ background: '#1677ff' }}>
+                    <pre className='text-wrap text-white'>
                         {searchResults}
 
                     </pre>

@@ -43,7 +43,7 @@ export default function LoginPage() {
 
 
             if (response.ok) {
-                router.push('/home');
+                router.push('/search');
             }
 
         } catch (error) {

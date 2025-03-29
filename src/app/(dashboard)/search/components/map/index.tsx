@@ -8,6 +8,7 @@ import { Dog } from "@/app/(dashboard)/interfaces";
 import { DogMarker } from "./dogMarker";
 import geoAlbersUsaTerritories from "geo-albers-usa-territories";
 import Image from "next/image";
+import { useUserProvider } from "@/app/(dashboard)/userProvider";
 
 // URL for U.S. geography data (states)
 const GEO_URL = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
@@ -20,17 +21,17 @@ const geographyStyles = {
 };
 
 interface MapProps {
-    results: Dog[];
     selectedDogs: string[];
     setSelectedDogs: (selectedDogs: string[]) => void;
 }
 
-export const Map = ({ results, selectedDogs, setSelectedDogs }: MapProps) => {
+export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
     // State to track which marker (by index) is hovered
     const [hoveredMarker, setHoveredMarker] = useState<Dog | null>(null);
+    const { data } = useUserProvider()
 
     // Early return if there are no results to display
-    if (!results.length) {
+    if (!data.length) {
         return null;
     }
 
@@ -97,7 +98,7 @@ export const Map = ({ results, selectedDogs, setSelectedDogs }: MapProps) => {
                     }
                 </Geographies>
                 {/* Render markers for each dog */}
-                {results.map((dog, index) => (
+                {data.map((dog, index) => (
                     <DogMarker
                         key={dog.id} // Use dog's id as key (assuming it's unique)
                         dog={dog}

@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Fetch",
   description: "Find your dog match today",
+  icons: {
+    icon: "/favicon.jpeg", // Standard favicon
+  },
 };
 
 export default function RootLayout({

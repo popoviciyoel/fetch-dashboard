@@ -31,6 +31,7 @@ export const fetchDogsByFilters = async (
 
             apiUrl += `/dogs/search?${queryParams.toString()}`;
         } else {
+            console.log('nextPageUrl')
             if (nextPageUrl) {
 
 
