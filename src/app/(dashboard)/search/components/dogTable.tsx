@@ -103,6 +103,7 @@ export const DogTable = ({ selectedDogs, setSelectedDogs }: DogTableProps) => {
 
 
   return <Table<Dog>
+    className=" m-w-full overflow-x-auto"
     loading={loading}
     rowSelection={rowSelection}
     columns={columns}

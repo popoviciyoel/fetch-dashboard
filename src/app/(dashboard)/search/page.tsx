@@ -77,7 +77,8 @@ export default function DogsPage() {
             <h1 className="mb-4 font-bold text-2xl">Fetch Database Search</h1>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center     m-w-full overflow-x-auto
+">
               <Button
                 className="w-32"
                 type="primary"
