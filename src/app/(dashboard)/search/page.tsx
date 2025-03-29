@@ -1,6 +1,6 @@
 'use client'; // This directive indicates that the code should run on the client side
 
-import { useState, useCallback, Suspense } from 'react';
+import { useState, useCallback } from 'react';
 import { Card, Button, message } from 'antd';
 import { EnvironmentOutlined, TableOutlined } from '@ant-design/icons';
 
@@ -63,7 +63,7 @@ export default function DogsPage() {
   const toggleMapView = useCallback(() => setMapView((prev) => !prev), []);
 
   return (
-    <Suspense fallback={<>Loading dogs</>}>
+    <>
       {/* Render Ant Design's message context holder */}
       {contextHolder}
 
@@ -119,6 +119,6 @@ export default function DogsPage() {
 
       {/* Modal component for displaying match details */}
       <Match match={match} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-    </Suspense>
+    </>
   );
 }
