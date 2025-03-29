@@ -1,14 +1,11 @@
 import stateData from '@/states.json'
-import { Dog } from './interfaces';
+import { Dog } from './app/(dashboard)/interfaces';
 import { RefObject } from 'react';
 
 
 const US_STATES: Record<string, string> = stateData;
 
 
-export function encodeArrayParam(key: string, values: string[]) {
-    return values.map(value => `${key}=${encodeURIComponent(value)}`).join("&");
-}
 
 export function parseLocation(input: string) {
     const words = input.split(/\s*,\s*|\s+/); // Split by commas or spaces
