@@ -6,8 +6,9 @@ import {
 } from "react-simple-maps";
 import { Dog } from "@/app/(dashboard)/interfaces";
 import { DogMarker } from "./dogMarker";
-import geoAlbersUsaTerritories from "geo-albers-usa-territories";
-import Image from "next/image";
+// @ts-expect-error package
+import * as geoAlbersUsaTerritories from "geo-albers-usa-territories";
+import Image from 'next/image'
 import { useUserProvider } from "@/app/(dashboard)/userProvider";
 
 // URL for U.S. geography data (states)
@@ -35,7 +36,6 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
         return null;
     }
 
-    console.log(geoAlbersUsaTerritories.geoAlbersUsaTerritories())
 
     // Handlers for marker hover events
     const handleMouseEnter = (dog: Dog) => setHoveredMarker(dog);
@@ -54,9 +54,7 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
     };
 
     // Create a reusable projection using the geoAlbersUsaTerritories package
-    const projection = geoAlbersUsaTerritories
-        .geoAlbersUsaTerritories()
-        .translate([400, 250]);
+    const projection = geoAlbersUsaTerritories.geoAlbersUsaTerritories().translate([400, 250]);
 
     return (
         <div>

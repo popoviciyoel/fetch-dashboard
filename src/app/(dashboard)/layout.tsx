@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <UserProvider>
                 <Header />
                 {/* <Navbar /> */}
-                <main style={{backgroundColor: 'rgb(249 247 241)'}}>{children}</main>
+                <main>{children}</main>
                 {/* <Footer /> */}
             </UserProvider>
         </Suspense>
