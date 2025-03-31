@@ -2,6 +2,15 @@ import { Dog, Location, Filters } from "@/app/(dashboard)/interfaces";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
+
+
+function isZipCode(locationSearch: string) {
+    const zipRegex = /^\d{5}(-\d{4})?$/;
+    return zipRegex.test(locationSearch);
+}
+
+
+
 export const fetchDogsByFilters = async (
     filter: Filters,
     locations: Location[],
@@ -10,7 +19,7 @@ export const fetchDogsByFilters = async (
     cursor: number,
 ): Promise<{ results: Dog[]; next: string | null; total: number, prev: string | null }> => {
     try {
-        const { breeds, minAge, maxAge, field, order } = filter
+        const { breeds, minAge, maxAge, field, order, locationSearch } = filter
         // Early return if no filters provided
 
         // Build search query
@@ -21,6 +30,9 @@ export const fetchDogsByFilters = async (
             if (locations.length > 0) {
                 const zipCodes = locations.map((location: Location) => location.zip_code)
                 zipCodes.forEach(value => queryParams.append("zipCodes", value));
+            }
+            if (isZipCode(locationSearch)) {
+                queryParams.append("zipCodes", locationSearch);
             }
             if (minAge !== undefined) queryParams.append("ageMin", minAge.toString());
             if (maxAge !== undefined) queryParams.append("ageMax", maxAge.toString());

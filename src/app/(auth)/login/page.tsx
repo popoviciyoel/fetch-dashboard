@@ -52,7 +52,8 @@ export default function LoginPage() {
     };
 
     return (<div className={styles.container}>
-        <Card title="Welcome to Fetch" className={styles.loginCard}>
+        <Card title="Welcome to Fetch 🐶 " className={styles.loginCard} >
+        
             <Form
                 form={form}
                 name="login"

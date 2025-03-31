@@ -7,6 +7,7 @@ import { fetchZipCodesByLocation } from "./queries/location";
 import { fetchDogsByFilters } from "./queries/dogs";
 import { Location, Dog, SortField, SortOrder, Filters } from "@/app/(dashboard)/interfaces";
 import { storePages } from "@/utils";
+import { Loading } from "./components/loading";
 
 
 interface Query {
@@ -55,15 +56,15 @@ const UserContext = createContext<UserContext>({
     user: { authenticated: false, availableBreeds: [], filters: { minAge: 0, maxAge: 20, locationSearch: '', breeds: [], field: SortField.BREED, order: SortOrder.ASC } },
     query: { results: [], next: null, prev: null, total: 0 },
     searchResults: '',
-    handleSearch: () => {},
-    setUser: () => {},
-    clearFilters: () => {},
-    handleAgeFilter: () => {},
-    handleBreedFilter: () => {},
-    handleLocationSearchFilter: () => {},
-    onChangeTable: () => {},
-    handleSortOrder: () => {},
-    handleSortField: () => {},
+    handleSearch: () => { },
+    setUser: () => { },
+    clearFilters: () => { },
+    handleAgeFilter: () => { },
+    handleBreedFilter: () => { },
+    handleLocationSearchFilter: () => { },
+    onChangeTable: () => { },
+    handleSortOrder: () => { },
+    handleSortField: () => { },
     data: [],
 });
 
@@ -149,6 +150,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             activePage = pageTracker.current.get(page)
 
             setLoading(false)
+            setQuery({ ...results, results: [...query.results, ...results.results] })
 
 
 
@@ -194,8 +196,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true)
         pageTracker.current.clear()
 
-
-
         try {
 
 
@@ -215,10 +215,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-                setSearchResults(`${breeds.length > 0 ?  breeds.join(', ') + 'in' : ''}` + ' ' + (locationSearch || "United States") + ' between ages ' + `${minAge || 0}` + " - " + `${maxAge || 20}` + `\nResults: ${results.total}`)
+            setSearchResults(`${breeds.length > 0 ? `${breeds.join(', ')} in ` : ''}` + (locationSearch || "United States") + ' between ages ' + `${minAge}` + " - " + `${maxAge}` + `\nResults: ${results.total}`)
 
 
-     
+
             const activeData = pageTracker.current.get(1)
             updateUrlParam('page', '1')
 
@@ -246,7 +246,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 
     if (!user?.authenticated) {
-        return <p>Loading your dogs</p>
+        <Loading />
     }
 
     console.log(' pageTracker.current', pageTracker.current)

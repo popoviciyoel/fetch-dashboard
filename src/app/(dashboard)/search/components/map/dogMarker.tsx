@@ -7,7 +7,7 @@ interface DogMarkerProps {
   selectedDogs: string[]
   onMouseEnter: (dog: Dog) => void;
   onMouseLeave: () => void;
-  onClick: (id: string) => void
+  onClick: (dog: Dog) => void
 }
 
 export function DogMarker({
@@ -30,7 +30,7 @@ export function DogMarker({
         coordinates={[longitude, latitude]}
         onMouseEnter={() => onMouseEnter(dog)}
         onMouseLeave={onMouseLeave}
-        onClick={() => onClick(id)}
+        onClick={() => onClick(dog)}
         className="cursor-pointer"
       >
         <circle r={10} fill={selectedDogs.includes(id) ? "#00000" : "#E42A1D"} stroke="#fff" strokeWidth={2} />

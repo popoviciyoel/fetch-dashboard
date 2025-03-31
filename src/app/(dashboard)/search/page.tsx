@@ -7,7 +7,8 @@ import { EnvironmentOutlined, TableOutlined } from '@ant-design/icons';
 import { Dog } from '../interfaces';
 import { fetchMatch } from '../queries/match';
 import { useUserProvider } from '../userProvider';
-
+import { HeartOutlined } from '@ant-design/icons'
+import { FavoriteDogs } from './components/filters/favorites';
 import { Filters } from './components/filters';
 import { Map } from './components/map';
 import { DogTable } from './components/dogTable';
@@ -18,7 +19,7 @@ export default function DogsPage() {
   const { results } = useUserProvider().query;
 
   // Manage state for selected dogs, matched dog, map view toggle, modal visibility, and loading state.
-  const [selectedDogs, setSelectedDogs] = useState<string[]>([]);
+  const [selectedDogs, setSelectedDogs] = useState<Dog[]>([]);
   const [match, setMatch] = useState<Dog | null>(null);
   const [mapView, setMapView] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -114,6 +115,9 @@ export default function DogsPage() {
         </Card>
         {/* Sidebar Filters */}
         <div className="col-start-4">
+       
+<FavoriteDogs           selectedDogs={selectedDogs}
+              setSelectedDogs={setSelectedDogs}/>
           <Filters />
         </div>
       </div>

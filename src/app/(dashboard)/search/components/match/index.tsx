@@ -1,6 +1,8 @@
 import { Dog } from '@/app/(dashboard)/interfaces';
 import { Modal } from 'antd';
 import Image from 'next/image'
+import Lottie from 'react-lottie';
+import animationData from './matchedAnimation.json'
 
 interface MatchProps {
     match: Dog | null
@@ -20,11 +22,19 @@ export const Match = ({ match, isModalOpen, setIsModalOpen }: MatchProps) => {
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+    console.log('match', match)
 
 
-
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: animationData,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
     return <Modal
-        title="🐶 You've Got a Match!"
+        // title="🐶 You've Got a Match!"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -33,6 +43,18 @@ export const Match = ({ match, isModalOpen, setIsModalOpen }: MatchProps) => {
     >
         {match ? (
             <div className="flex flex-col items-center text-center">
+<div className="flex mb-4 border-b-2 border-solid border-gray-300 items-center w-full justify-center">
+                    <Lottie options={defaultOptions}
+                        height={100}
+                        width={100}
+                        style={{margin: 0}}
+                        
+                    />
+                    You've Got a Match!
+
+                </div>
+                <hr />
+
                 <Image
                     width={192}
                     height={192}
@@ -43,7 +65,7 @@ export const Match = ({ match, isModalOpen, setIsModalOpen }: MatchProps) => {
                 <h2 className="text-xl font-semibold">{match.name}</h2>
                 <p className="text-gray-600">{match.age} years old</p>
                 <p className="text-gray-600">{match.breed}</p>
-                <p className="text-gray-500">📍 Located in {match.zip_code}</p>
+                <p className="text-gray-500">📍 Located in  {match.city} {match.state} , {match.zip_code}</p>
 
                 <button
                     onClick={handleOk}

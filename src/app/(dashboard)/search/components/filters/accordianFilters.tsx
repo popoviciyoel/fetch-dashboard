@@ -45,7 +45,6 @@ export const AccordionFilters: React.FC = () => {
       label: 'Location',
       children: (
         <Input 
-          prefix={<SearchOutlined />} 
           value={locationSearch} 
           placeholder="City, State, or ZIP code" 
           onChange={handleLocationSearchFilter} 
