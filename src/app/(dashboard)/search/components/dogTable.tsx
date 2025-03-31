@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Dog } from "@/app/(dashboard)/interfaces"
-import { Button, Checkbox, CheckboxOptionType, ConfigProvider, Empty, GetProp, Table, type TableProps } from 'antd';
+import { Checkbox, CheckboxOptionType, Table, type TableProps } from 'antd';
 import { useUserProvider } from "@/app/(dashboard)/userProvider";
 import type { TableRowSelection } from 'antd/es/table/interface';
 import { useSearchParams } from "next/navigation";

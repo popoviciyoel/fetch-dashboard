@@ -50,8 +50,7 @@ export const Match = ({ match, isModalOpen, setIsModalOpen }: MatchProps) => {
                         style={{margin: 0}}
                         
                     />
-                    You've Got a Match!
-
+                    {`You've Got a Match!`}
                 </div>
                 <hr />
 

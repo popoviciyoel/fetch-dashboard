@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Card, Modal, List, Avatar } from "antd";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { HeartOutlined } from "@ant-design/icons";
 import { Dog } from "@/app/(dashboard)/interfaces";
 
 

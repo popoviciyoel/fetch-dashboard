@@ -1,7 +1,7 @@
 import { Card, Button } from 'antd';
 import { AccordionFilters } from '@/app/(dashboard)/search/components/filters/accordianFilters';
 import { useUserProvider } from '@/app/(dashboard)/userProvider';
-import { HeartOutlined, SearchOutlined } from '@ant-design/icons'
+import { SearchOutlined } from '@ant-design/icons'
 
 
 export function Filters() {

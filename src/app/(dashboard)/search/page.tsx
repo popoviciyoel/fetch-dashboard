@@ -7,7 +7,6 @@ import { EnvironmentOutlined, TableOutlined } from '@ant-design/icons';
 import { Dog } from '../interfaces';
 import { fetchMatch } from '../queries/match';
 import { useUserProvider } from '../userProvider';
-import { HeartOutlined } from '@ant-design/icons'
 import { FavoriteDogs } from './components/filters/favorites';
 import { Filters } from './components/filters';
 import { Map } from './components/map';
@@ -39,7 +38,7 @@ export default function DogsPage() {
     setLoading(true); // Start loading indicator
     try {
       // Fetch the matched dog's ID based on the selected dogs.
-      const matchedDogId = await fetchMatch(selectedDogs);
+      const matchedDogId = await fetchMatch(selectedDogs.map(dog => dog.id));
       // Find the matched dog's full details in the results array.
       const matchedDog = results?.find((dog) => dog.id === matchedDogId);
 
