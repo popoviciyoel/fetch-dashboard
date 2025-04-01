@@ -9,9 +9,13 @@ import { fetchMatch } from '../queries/match';
 import { useUserProvider } from '../userProvider';
 import { FavoriteDogs } from './components/filters/favorites';
 import { Filters } from './components/filters';
-import { Map } from './components/map';
+import dynamic from 'next/dynamic';
 import { DogTable } from './components/dogTable';
 import { Match } from './components/match';
+import { Loading } from '../components/loading';
+const Map = dynamic(() => import('./components/map').then((mod) => mod.Map), {
+  loading: Loading,
+})
 
 export default function DogsPage() {
   // Destructure the 'results' from our user provider's query for cleaner access.
@@ -108,7 +112,7 @@ export default function DogsPage() {
         <div className="col-start-4">
 
           <FavoriteDogs selectedDogs={selectedDogs}
-            setSelectedDogs={setSelectedDogs} handleMatch={handleMatch} loading={loading}  />
+            setSelectedDogs={setSelectedDogs} handleMatch={handleMatch} loading={loading} />
           <Filters />
         </div>
       </div>

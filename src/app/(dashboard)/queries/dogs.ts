@@ -44,7 +44,7 @@ export const fetchDogsByFilters = async (
     cursor: number
 ): Promise<{ results: Dog[]; next: string | null; total: number, prev: string | null }> => {
     try {
-        let apiUrl = `${BASE_URL}/dogs/search?${buildQueryParams(filter, locations, isNewSearch, cursor, nextPageUrl).toString()}`;
+        const apiUrl = `${BASE_URL}/dogs/search?${buildQueryParams(filter, locations, isNewSearch, cursor, nextPageUrl).toString()}`;
 
         // Fetch dog IDs
         const response = await fetch(apiUrl, {

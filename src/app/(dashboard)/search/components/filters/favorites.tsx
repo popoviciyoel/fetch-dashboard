@@ -77,10 +77,12 @@ export const FavoriteDogs = ({ selectedDogs, setSelectedDogs, handleMatch, loadi
                 <List
                     itemLayout="horizontal"
                     dataSource={selectedDogs}
-                    renderItem={(dog: Dog) => (
+                    renderItem={(dog: Dog, dataIndex) => (
                         <List.Item
+                        key={dataIndex}
                             actions={[
                                 <Button
+                                key={'remove' + dataIndex}
                                     danger
                                     onClick={() => handleRemove(dog.id)}
                                     size="small"
