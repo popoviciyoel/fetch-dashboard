@@ -84,7 +84,8 @@ export const fetchDogsByFilters = async (
             });
 
             const fetchedLocations: Location[] = await locationsResponse.json();
-            fetchedLocations.forEach(location => locationsMap.set(location.zip_code, location));
+
+            fetchedLocations.forEach(location => locationsMap.set(location?.zip_code, location));
         }
 
         // Merge dog details with location data

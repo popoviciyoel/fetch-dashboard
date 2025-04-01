@@ -19,8 +19,8 @@ export const FavoriteDogs = ({ selectedDogs, setSelectedDogs, handleMatch, loadi
     }, [setSelectedDogs]);
 
     return (
-        <div>
-            <Card className="mb-4">
+        <div  className="lg:mb-4 mb-0.5">
+            <Card>
                 <div className="flex justify-between flex-col lg:text-2xl md:text-lg text-m">
                     <h1 className="mb-4 font-bold">Favorites</h1>
                     <div className="flex justify-between">
