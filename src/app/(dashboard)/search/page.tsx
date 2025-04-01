@@ -9,15 +9,14 @@ import { fetchMatch } from '../queries/match';
 import { useUserProvider } from '../userProvider';
 import { FavoriteDogs } from './components/filters/favorites';
 import { Filters } from './components/filters';
-// import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic';
 import { DogTable } from './components/dogTable';
 import { Match } from './components/match';
-import { Map } from './components/map';
-// import { Loading } from '../components/loading';
-// const Map = dynamic(() => import('./components/map').then((mod) => mod.Map), {
-//   loading: Loading,
-//   ssr: false
-// })
+import { Loading } from '../components/loading';
+const Map = dynamic(() => import('./components/map').then((mod) => mod.Map), {
+  loading: Loading,
+  ssr: false
+})
 
 export default function DogsPage() {
   // Destructure the 'results' from our user provider's query for cleaner access.
