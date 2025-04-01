@@ -15,6 +15,7 @@ import { Match } from './components/match';
 import { Loading } from '../components/loading';
 const Map = dynamic(() => import('./components/map').then((mod) => mod.Map), {
   loading: Loading,
+  ssr: false
 })
 
 export default function DogsPage() {
