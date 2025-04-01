@@ -12,13 +12,8 @@ export const config = {
 export function middleware(request: NextRequest) {
 
 
-
   const path = request.nextUrl.pathname
-  console.log('path', path)
-
   if (path !== '/login' && path !== 'search') {
-    console.log('in hjer')
-
     const loginUrl = new URL('/login', request.url)
     return NextResponse.redirect(loginUrl)
 

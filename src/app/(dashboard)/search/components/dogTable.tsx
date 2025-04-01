@@ -77,7 +77,6 @@ export const DogTable = ({ selectedDogs, setSelectedDogs }: DogTableProps) => {
   const { loading, onChangeTable, query, data } = useUserProvider()
   const param = useSearchParams()
 
-  console.log('data', data, selectedDogs)
 
   const newColumns = columns.map((item) => ({
     ...item,

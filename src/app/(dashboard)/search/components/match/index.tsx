@@ -22,7 +22,6 @@ export const Match = ({ match, isModalOpen, setIsModalOpen }: MatchProps) => {
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-    console.log('match', match)
 
 
     const defaultOptions = {

@@ -40,7 +40,7 @@ export default function DogsPage() {
       // Fetch the matched dog's ID based on the selected dogs.
       const matchedDogId = await fetchMatch(selectedDogs.map(dog => dog.id));
       // Find the matched dog's full details in the results array.
-      const matchedDog = results?.find((dog) => dog.id === matchedDogId);
+      const matchedDog = selectedDogs?.find((dog) => dog.id === matchedDogId);
 
       // If no matching dog is found, display an error.
       if (!matchedDog) {
@@ -79,15 +79,7 @@ export default function DogsPage() {
             {/* Action Buttons */}
             <div className="flex gap-2 items-center     m-w-full overflow-x-auto
 ">
-              <Button
-                className="w-32"
-                type="primary"
-                onClick={handleMatch}
-                disabled={!selectedDogs.length} // Disable if no dogs are selected
-                loading={loading} // Show loading spinner during match fetching
-              >
-                Find Match
-              </Button>
+
               <Button
                 className="w-32"
                 type="default"
@@ -114,9 +106,9 @@ export default function DogsPage() {
         </Card>
         {/* Sidebar Filters */}
         <div className="col-start-4">
-       
-<FavoriteDogs           selectedDogs={selectedDogs}
-              setSelectedDogs={setSelectedDogs}/>
+
+          <FavoriteDogs selectedDogs={selectedDogs}
+            setSelectedDogs={setSelectedDogs} handleMatch={handleMatch} loading={loading}  />
           <Filters />
         </div>
       </div>

@@ -10,8 +10,6 @@ interface LoginFormData {
     name: string;
 }
 
-console.log('process.env.PUBLIC_NEXT_BASE_URL', process.env.NEXT_PUBLIC_BASE_URL)
-
 export default function LoginPage() {
     const router = useRouter();
     const [form] = Form.useForm();
@@ -27,20 +25,6 @@ export default function LoginPage() {
                 body: JSON.stringify(values),
                 credentials: 'include'
             });
-            console.log('finish')
-
-
-
-            console.log('response', response)
-
-
-
-
-            // if (result.error) {
-            //     throw new Error(result.error);
-            // }
-
-
 
             if (response.ok) {
                 router.push('/search');
@@ -53,7 +37,7 @@ export default function LoginPage() {
 
     return (<div className={styles.container}>
         <Card title="Welcome to Fetch 🐶 " className={styles.loginCard} >
-        
+
             <Form
                 form={form}
                 name="login"

@@ -9,9 +9,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <Suspense fallback={<>Loading Dogs</>}>
             <UserProvider>
                 <Header />
-                {/* <Navbar /> */}
                 <main>{children}</main>
-                {/* <Footer /> */}
             </UserProvider>
         </Suspense>
 
