@@ -1,98 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Button, Card, Modal, List, Avatar } from "antd";
 import { HeartOutlined } from "@ant-design/icons";
 import { Dog } from "@/app/(dashboard)/interfaces";
 
-
-
-
 interface FavoriteDogsProps {
     selectedDogs: Dog[];
-    setSelectedDogs: (selectedDogs: Dog[]) => void;
+    setSelectedDogs: React.Dispatch<React.SetStateAction<Dog[]>>; // ✅ Correct type
     handleMatch: () => Promise<void>;
-    loading: boolean
-
+    loading: boolean;
 }
-
 
 export const FavoriteDogs = ({ selectedDogs, setSelectedDogs, handleMatch, loading }: FavoriteDogsProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const hasSelectedDogs = useMemo(() => selectedDogs.length > 0, [selectedDogs]);
 
-
-    // Function to handle removal
-    const handleRemove = (id: string) => {
-        setSelectedDogs(selectedDogs.filter(dog => dog.id !== id));
-    };
-
+    const handleRemove = useCallback((id: string) => {
+        setSelectedDogs((prevDogs: Dog[]) => (prevDogs.filter(dog => dog.id !== id)));
+    }, [setSelectedDogs]);
 
     return (
         <div>
-            <Card className='mb-4! '>
-                <div className='flex justify-between lg:text-2xl md:text-lg text-m flex flex-col'>
+            <Card className="mb-4">
+                <div className="flex justify-between flex-col lg:text-2xl md:text-lg text-m">
+                    <h1 className="mb-4 font-bold">Favorites</h1>
                     <div className="flex justify-between">
-                        <h1 className='mb-4 font-bold '>
-                            Favorites
-                        </h1>
-
-
-                    </div>
-
-                    <div className="flex justify-between">
-
-
                         <Button
                             className="w-32"
                             type="primary"
                             onClick={handleMatch}
-                            disabled={!selectedDogs.length} // Disable if no dogs are selected
-                            loading={loading} // Show loading spinner during match fetching
+                            disabled={!hasSelectedDogs}
+                            loading={loading}
                         >
                             Find Match
                         </Button>
-                        <Button icon={<HeartOutlined />} type="default" onClick={() => setIsModalOpen(true)} disabled={selectedDogs.length === 0}>
+                        <Button icon={<HeartOutlined />} type="default" onClick={() => setIsModalOpen(true)} disabled={!hasSelectedDogs}>
                             View ({selectedDogs.length})
                         </Button>
-
                     </div>
                 </div>
             </Card>
 
-
-            <Modal title={<div><h1>
-                Favorited Dogs
-
-            </h1>
-            </div>} open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={<>
-                <Button type="primary" onClick={() => setIsModalOpen(false)} >
-                    Close
-                </Button>
-                <Button type="default" danger
-                    htmlType="button" onClick={() => { setSelectedDogs([]) }}>
-                    Clear All
-                </Button>
-
-
-            </>}>
-
+            <Modal
+                title={<h1>Favorited Dogs</h1>}
+                open={isModalOpen}
+                onCancel={() => setIsModalOpen(false)}
+                footer={
+                    <>
+                        <Button type="primary" onClick={() => setIsModalOpen(false)}>Close</Button>
+                        <Button type="default" danger onClick={() => setSelectedDogs([])}>Clear All</Button>
+                    </>
+                }
+            >
                 <List
                     itemLayout="horizontal"
                     dataSource={selectedDogs}
-                    renderItem={(dog: Dog, dataIndex) => (
+                    renderItem={(dog: Dog) => (
                         <List.Item
-                        key={dataIndex}
+                            key={dog.id}
                             actions={[
-                                <Button
-                                key={'remove' + dataIndex}
-                                    danger
-                                    onClick={() => handleRemove(dog.id)}
-                                    size="small"
-                                >
+                                <Button key={`remove-${dog.id}`} danger onClick={() => handleRemove(dog.id)} size="small">
                                     Remove
                                 </Button>
                             ]}
                         >
                             <List.Item.Meta
-                                avatar={<Avatar size={"large"} src={dog.img} />}
+                                avatar={<Avatar size="large" src={dog.img} />}
                                 title={dog.name}
                                 description={
                                     <div>
@@ -110,4 +82,3 @@ export const FavoriteDogs = ({ selectedDogs, setSelectedDogs, handleMatch, loadi
         </div>
     );
 };
-

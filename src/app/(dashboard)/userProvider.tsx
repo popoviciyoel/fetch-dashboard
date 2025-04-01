@@ -7,7 +7,7 @@ import { fetchZipCodesByLocation } from "./queries/location";
 import { fetchDogsByFilters } from "./queries/dogs";
 import { Dog, SortField, SortOrder, Filters } from "@/app/(dashboard)/interfaces";
 import { storePages } from "@/utils";
-import { Loading } from "./components/loading";
+import { Loading } from "./components/Loading";
 
 
 interface Query {

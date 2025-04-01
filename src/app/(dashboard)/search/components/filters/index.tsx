@@ -17,10 +17,10 @@ export function Filters() {
                     Filters
                 </h1>
                 <div className=' flex gap-2'>
-                    <Button className='lg:w-24 md:w-10 w-8' icon={<SearchOutlined />} type="primary" htmlType="button" onClick={handleSearch}>
+                    <Button className='w-24' icon={<SearchOutlined />} type="primary" htmlType="button" onClick={handleSearch}>
                         Search
                     </Button>
-                    <Button className='lg:w-24 md:w-12 w-8' type="default" htmlType="button" onClick={clearFilters
+                    <Button className='w-24' type="default" htmlType="button" onClick={clearFilters
                     }>
                         Clear Filters
                     </Button>

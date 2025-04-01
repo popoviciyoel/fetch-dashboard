@@ -1,7 +1,6 @@
 import React from 'react';
 import type { CollapseProps, SliderSingleProps } from 'antd';
 import { Collapse, Input, Slider } from 'antd';
-
 import { CustomSelect } from './customSelect';
 import { SortBy } from './sortBy';
 import {  useUserProvider } from '@/app/(dashboard)/userProvider';

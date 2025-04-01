@@ -1,5 +1,3 @@
-'use client'
-
 import Lottie from 'react-lottie';
 import animationData from './loaderAnimation.json'
 

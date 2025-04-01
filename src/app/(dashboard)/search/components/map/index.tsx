@@ -34,9 +34,6 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
     // State to track which marker (by index) is hovered
     const [hoveredMarker, setHoveredMarker] = useState<Dog | null>(null);
 
-
-
-
     // Handlers for marker hover events
     const handleMouseEnter = (dog: Dog) => setHoveredMarker(dog);
     const handleMouseLeave = () => setHoveredMarker(null);
@@ -51,7 +48,6 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
             setSelectedDogs([...selectedDogs, newDog])
         }
     }
-
 
     const { loading, onChangeTable, query, data } = useUserProvider()
     const param = useSearchParams()
@@ -74,11 +70,8 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
         current: Number(param.get('page'))
     }
 
-
-
     return (
         <div>
-            {/* Title or header for the map */}
             {/* Floating HTML Tooltip */}
             {hoveredMarker && <div
                 style={{
@@ -134,8 +127,6 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
 
             </ComposableMap>
             <Pagination  {...paginationConfig} align="end" />
-
-
         </div>
     );
 };

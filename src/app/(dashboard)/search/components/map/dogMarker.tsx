@@ -38,8 +38,6 @@ export function DogMarker({
           {name}
         </text>
       </Marker>
-
-
     </>
   );
 }

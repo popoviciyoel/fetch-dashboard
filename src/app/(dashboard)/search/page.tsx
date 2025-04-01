@@ -12,7 +12,7 @@ import { Filters } from './components/filters';
 import dynamic from 'next/dynamic';
 import { DogTable } from './components/dogTable';
 import { Match } from './components/match';
-import { Loading } from '../components/loading';
+import { Loading } from '../components/Loading';
 const Map = dynamic(() => import('./components/map').then((mod) => mod.Map), {
   loading: Loading,
   ssr: false
@@ -72,17 +72,17 @@ export default function DogsPage() {
       {/* Render Ant Design's message context holder */}
       {contextHolder}
 
-      <div className="p-6 grid grid-cols-4 gap-5">
+      <div className="lg:p-6 grid lg:grid-cols-4 lg:gap-5 p-0.5 gap-0.5 grid-cols-1">
 
 
         {/* Main content card containing header and view components */}
-        <Card className="col-start-1 col-end-4">
+        <Card className=" lg:col-start-1 lg:col-end-4">
           <div className="flex justify-between">
             {/* Header */}
             <h1 className="mb-4 font-bold text-2xl">Fetch Database Search</h1>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 items-center     m-w-full overflow-x-auto
+            <div className="flex gap-2 items-center     m-w-full 
 ">
 
               <Button
@@ -110,7 +110,7 @@ export default function DogsPage() {
           )}
         </Card>
         {/* Sidebar Filters */}
-        <div className="col-start-4">
+        <div className="lg:col-start-4 row-start-1">
 
           <FavoriteDogs selectedDogs={selectedDogs}
             setSelectedDogs={setSelectedDogs} handleMatch={handleMatch} loading={loading} />
