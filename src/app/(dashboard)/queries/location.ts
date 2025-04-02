@@ -13,7 +13,7 @@ export const fetchZipCodesByLocation = async (searchQuery: string): Promise<Loca
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ city, states: state ? [state.toUpperCase()] : undefined , size:50 }),
+      body: JSON.stringify({ city, states: state ? [state.toUpperCase()] : undefined , size:1000 }),
     });
 
     if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
