@@ -74,7 +74,7 @@ const defaultCheckedList = columns.map((item) => item.key);
 export const DogTable = ({ selectedDogs, setSelectedDogs }: DogTableProps) => {
   const [checkedList, setCheckedList] = useState(defaultCheckedList);
 
-  const { loading, onChangeTable, query, data } = useUserProvider()
+  const { loading, onChangeTable, results, data } = useUserProvider()
   const param = useSearchParams()
 
 
@@ -111,7 +111,7 @@ export const DogTable = ({ selectedDogs, setSelectedDogs }: DogTableProps) => {
     pageSize: 10,
     showSizeChanger: false,
     onChange: onChangeTable,
-    total: query?.total,
+    total: results?.total,
     showQuickJumper: true,
     current: Number(param.get('page'))
   }

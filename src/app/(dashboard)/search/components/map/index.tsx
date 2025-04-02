@@ -49,7 +49,7 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
         }
     }
 
-    const { loading, onChangeTable, query, data } = useUserProvider()
+    const { loading, onChangeTable, results, data } = useUserProvider()
     const param = useSearchParams()
 
     // Early return if there are no results to display
@@ -65,7 +65,7 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
         pageSize: 10,
         showSizeChanger: false,
         onChange: onChangeTable,
-        total: query?.total,
+        total: results?.total,
         showQuickJumper: true,
         current: Number(param.get('page'))
     }

@@ -1,50 +1,16 @@
-import { Dog, Location, Filters } from "@/app/(dashboard)/interfaces";
+import { Dog, Location } from "@/app/(dashboard)/interfaces";
+import { RefObject } from "react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-function isZipCode(locationSearch: string): boolean {
-    const zipRegex = /^\d{5}(-\d{4})?$/;
-    return zipRegex.test(locationSearch);
-}
-
-const QUERY_SIZE = '30';
-
-const buildQueryParams = (filter: Filters, locations: Location[], isNewSearch: boolean, cursor: number, nextPageUrl: string | null): URLSearchParams => {
-    const { breeds, minAge, maxAge, field, order, locationSearch } = filter;
-    const queryParams = new URLSearchParams();
-
-    if (isNewSearch) {
-        if (breeds.length > 0) breeds.forEach(breed => queryParams.append('breeds', breed));
-        if (locations.length > 0) locations.forEach(location => queryParams.append("zipCodes", location.zip_code));
-        if (isZipCode(locationSearch)) queryParams.append("zipCodes", locationSearch);
-        if (minAge !== undefined) queryParams.append("ageMin", minAge.toString());
-        if (maxAge !== undefined) queryParams.append("ageMax", maxAge.toString());
-        queryParams.append("size", QUERY_SIZE);
-        queryParams.append('sort', `${field}:${order}`);
-    } else if (nextPageUrl) {
-        const oldParams = new URLSearchParams(nextPageUrl.split('?')[1]);
-        oldParams.forEach((value, key) => {
-            if (key.startsWith('breeds')) queryParams.append('breeds', value);
-            if (key.startsWith('zipCodes')) queryParams.append('zipCodes', value);
-        });
-        queryParams.set('from', cursor.toString());
-        queryParams.append("size", QUERY_SIZE);
-    } else {
-        throw new Error("Next Page doesn't exist");
-    }
-
-    return queryParams;
-};
 
 export const fetchDogsByFilters = async (
-    filter: Filters,
-    locations: Location[],
-    isNewSearch: boolean,
-    nextPageUrl: string | null,
-    cursor: number
-): Promise<{ results: Dog[]; next: string | null; total: number, prev: string | null }> => {
+    query: string,
+    zipCodeLookup: RefObject<Map<string, Location>>
+  
+): Promise<{ results: Dog[];  total: number }> => {
     try {
-        const apiUrl = `${BASE_URL}/dogs/search?${buildQueryParams(filter, locations, isNewSearch, cursor, nextPageUrl).toString()}`;
+        const apiUrl = `${BASE_URL}/dogs/search?${query}`;
 
         // Fetch dog IDs
         const response = await fetch(apiUrl, {
@@ -54,8 +20,8 @@ export const fetchDogsByFilters = async (
         });
         if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
 
-        const { resultIds, next, total, prev } = await response.json();
-        if (!resultIds || resultIds.length === 0) return { results: [], next, total, prev: null };
+        const { resultIds, total} = await response.json();
+        if (!resultIds || resultIds.length === 0) return { results: [],  total, };
 
         // Fetch dog details
         const detailsResponse = await fetch(`${BASE_URL}/dogs`, {
@@ -69,34 +35,45 @@ export const fetchDogsByFilters = async (
 
         const dogs: Dog[] = await detailsResponse.json();
 
-        // Handling locations and merging with dogs
-        const locationsMap = new Map<string, Location | null>();
-        locations.forEach(location => locationsMap.set(location.zip_code, location));
+        // // Handling locations and merging with dogs
+        // const locationsMap = new Map<string, Location | null>();
+        // locations.forEach(location => locationsMap.set(location.zip_code, location));
 
-        // Fetch unique locations if needed
-        if (locations.length === 0) {
-            const uniqueZipCodes = [...new Set(dogs.map(dog => dog.zip_code))];
+        // // Fetch unique locations if needed
+        // if query isn't location based we need to search locations
+        console.log('zipCodeLookup', zipCodeLookup.current.keys())
+        if (!query.includes('zipCodes')) {
+
+            const uniqueZipCodes = new Set()
+
+            // if we don't have location object for zipcode retrieve it
+            dogs.forEach(dog => {
+                if(!zipCodeLookup.current.has(dog.zip_code)){
+                    uniqueZipCodes.add(dog.zip_code)
+                }
+            })
+
             const locationsResponse = await fetch(`${BASE_URL}/locations`, {
                 credentials: "include",
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(uniqueZipCodes),
+                body: JSON.stringify(uniqueZipCodes.keys().toArray()),
             });
 
             const fetchedLocations: Location[] = await locationsResponse.json();
 
-            fetchedLocations.forEach(location => locationsMap.set(location?.zip_code, location));
+            fetchedLocations.forEach(location => zipCodeLookup?.current?.set(location?.zip_code, location));
         }
 
         // Merge dog details with location data
         const dogsWithLocation = dogs.map(dog => ({
             ...dog,
-            ...locationsMap.get(dog.zip_code)
+            ...zipCodeLookup.current.get(dog.zip_code)
         }));
 
-        return { results: dogsWithLocation, next, total, prev };
+        return { results: dogsWithLocation,  total };
     } catch (error) {
         console.error("Failed to fetch dogs:", error);
-        return { results: [], next: null, total: 0, prev: null };
+        return { results: [], total: 0 };
     }
 };
