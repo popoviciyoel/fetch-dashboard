@@ -41,7 +41,6 @@ export const fetchDogsByFilters = async (
 
         // // Fetch unique locations if needed
         // if query isn't location based we need to search locations
-        console.log('zipCodeLookup', zipCodeLookup.current.keys())
         if (!query.includes('zipCodes')) {
 
             const uniqueZipCodes = new Set()

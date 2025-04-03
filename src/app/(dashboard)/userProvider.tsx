@@ -296,7 +296,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 export const useUserProvider = () => {
   const userContext = useContext(UserContext);
   if (!userContext) {
-    console.log("user not authenticated");
+    throw Error('User Not Authenticated')
   }
   return userContext;
 };

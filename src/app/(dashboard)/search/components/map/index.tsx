@@ -113,7 +113,7 @@ export const Map = ({ selectedDogs, setSelectedDogs }: MapProps) => {
                     }
                 </Geographies>
                 {/* Render markers for each dog */}
-                {data.map((dog, index) => (
+                {data?.map((dog, index) => (
                     <DogMarker
                         key={dog.id} // Use dog's id as key (assuming it's unique)
                         dog={dog}
