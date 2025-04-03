@@ -1,17 +1,14 @@
 'use client';
 
 import { Button, Card, Form, Input, message } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { UserOutlined, MailOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import styles from './login.module.css';
-import { loginAction } from './action';
 
 interface LoginFormData {
     email: string;
     name: string;
 }
-
-console.log('process.env.PUBLIC_NEXT_BASE_URL', process.env.NEXT_PUBLIC_BASE_URL)
 
 export default function LoginPage() {
     const router = useRouter();
@@ -28,32 +25,19 @@ export default function LoginPage() {
                 body: JSON.stringify(values),
                 credentials: 'include'
             });
-            console.log('finish')
-
-
-
-            console.log('response', response)
-
-
-
-
-            // if (result.error) {
-            //     throw new Error(result.error);
-            // }
-
-
 
             if (response.ok) {
-                router.push('/');
+                router.push('/search');
             }
 
         } catch (error) {
-            message.error('Login failed. Please try again.');
+            message.error('Login failed. Please try again.' + error);
         }
     };
 
     return (<div className={styles.container}>
-        <Card title="Login" className={styles.loginCard}>
+        <Card title="Welcome to Fetch 🐶 " className={styles.loginCard} >
+
             <Form
                 form={form}
                 name="login"

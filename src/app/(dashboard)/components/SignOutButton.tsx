@@ -4,7 +4,7 @@ import { Button } from 'antd'
 
 export function SignOutButton() {
     const router = useRouter()
-    // In your component:
+    
     const handleSignOut = async () => {
         const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/auth/logout', {
             method: 'POST',
@@ -15,9 +15,8 @@ export function SignOutButton() {
             throw new Error('Signout failed');
 
         }
-        // Redirect or update UI
+        // Redirect to Login
         router.push('/login')
-
     }
 
     return (
